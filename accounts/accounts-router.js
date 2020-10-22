@@ -15,14 +15,17 @@ router.get("/", async (req,res,next) => {
 })
 
 router.get("/:id", async (req,res,next) => {
+    // console.log("does ID exist?",doesIdExist(0))
+    // console.log("does ID exist?",doesIdExist(1))
+    // console.log("does ID exist?",doesIdExist(req.params.id))
+    if(!getAccountById(req.params.id)){ // WHY IS THIS NOT WORKING?
+        return res.status(404).json({
+            error: "account not found"
+        })
+    }
     try{
-        if(!getAccountById(req.params.id)){ // WHY IS THIS NOT WORKING?
-            return res.status(404).json({
-                error: "account not found"
-            })
-        }
         const account = await getAccountById(req.params.id)
-        res.json(account)
+        res.status(200).json(account)
     }catch(err){
         next(err)
     }
@@ -76,5 +79,16 @@ function getAccountById(id){
         .from("accounts")
         .where("id", id)
 }
+
+// function doesIdExist(id){
+//     const count = db
+//         .count("*")
+//         .from("accounts")
+//         .where("id", id)
+    
+//     if (count == 0){return false}
+
+//     return true
+// }
 
 module.exports = router;
